@@ -16,7 +16,7 @@ import java.util.UUID;
 public class StateController {
 
     @Autowired
-    StateRepository repository;
+    private StateRepository repository;
 
     @GetMapping
     public ResponseEntity<List<State>> findAllStates(){
