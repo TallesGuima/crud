@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -29,4 +30,47 @@ public class UserController {
         User newUser = repository.save(user);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
+
+    @GetMapping(value = "/findbyid/{id}")
+    public ResponseEntity<Optional<User>> getUserById(@PathVariable UUID id) {
+        Optional<User> userById = repository.findById(id);
+        return new ResponseEntity<>(userById, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/findbyname/{name}")
+    public ResponseEntity<Optional<User>> getUserByName(@PathVariable String name) {
+        Optional<User> userByName = repository.findByName(name);
+        return new ResponseEntity<>(userByName, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/update/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User user) {
+        Optional<User> userToUpdate = repository.findById(id);
+        if(userToUpdate.isPresent()){
+            User userUpdate = userToUpdate.get();
+
+            userUpdate.setName(user.getName());
+            userUpdate.setLogin(user.getLogin());
+            userUpdate.setPassword(user.getPassword());
+            userUpdate.setActive(user.isActive());
+
+            User userUpdated = repository.save(userUpdate);
+            return new ResponseEntity<>(userUpdated, HttpStatus.OK);
+        } else {
+            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping(value = "/delete/{id}")
+    public ResponseEntity deleteUser(@PathVariable UUID id){
+        Optional<User> userToDelete = repository.findById(id);
+        if(userToDelete.isPresent()){
+            repository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 }

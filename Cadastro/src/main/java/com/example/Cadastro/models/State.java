@@ -14,16 +14,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tb_users")
-public class User {
+@Table(name = "tb_state")
+public class State {
     @Id
     private UUID id;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private String login;
-    @Column(nullable = false)
-    private String password;
-    @Column(nullable = false)
-    private boolean active;
+    private String abbreviation;
+
 }
