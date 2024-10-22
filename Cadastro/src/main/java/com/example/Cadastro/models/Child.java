@@ -24,9 +24,4 @@ public class Child {
     private String name;
     @Column(nullable = false)
     private LocalDate birthday;
-
-
-//    UUID id
-//    String name
-//    LocalDate birthday
 }
