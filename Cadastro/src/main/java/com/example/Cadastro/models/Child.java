@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tb_children")
+@Table(name = "children")
 public class Child {
 
     @Id
