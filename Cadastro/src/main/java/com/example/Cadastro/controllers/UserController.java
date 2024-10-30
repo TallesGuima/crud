@@ -26,7 +26,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> postUser(@RequestBody User user){
-        user.setId(UUID.randomUUID());
+
         User newUser = repository.save(user);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
@@ -34,16 +34,20 @@ public class UserController {
     @GetMapping(value = "/findbyid/{id}")
     public ResponseEntity<Optional<User>> getUserById(@PathVariable UUID id) {
         Optional<User> userById = repository.findById(id);
-        return new ResponseEntity<>(userById, HttpStatus.OK);
+        return userById.isPresent() ?
+                new ResponseEntity<>(userById, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "/findbyname/{name}")
     public ResponseEntity<Optional<User>> getUserByName(@PathVariable String name) {
         Optional<User> userByName = repository.findByName(name);
-        return new ResponseEntity<>(userByName, HttpStatus.OK);
+        return userByName.isPresent() ?
+                new ResponseEntity<>(userByName, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping(value = "/update/{id}")
+    @PutMapping(value = "/{id}")
     public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User user) {
         Optional<User> userToUpdate = repository.findById(id);
         if(userToUpdate.isPresent()){
@@ -61,10 +65,9 @@ public class UserController {
         }
     }
 
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/{id}")
     public ResponseEntity deleteUser(@PathVariable UUID id){
-        Optional<User> userToDelete = repository.findById(id);
-        if(userToDelete.isPresent()){
+        if(repository.findById(id).isPresent()){
             repository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {

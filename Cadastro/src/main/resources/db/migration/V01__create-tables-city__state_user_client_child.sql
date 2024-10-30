@@ -21,6 +21,14 @@ CREATE TABLE cities(
     state_id UUID REFERENCES states(id)
 );
 
+
+-- table children
+CREATE TABLE children(
+    id UUID PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    birthday DATE
+);
+
 -- table clients
 CREATE TABLE clients(
     id UUID PRIMARY KEY,
@@ -29,19 +37,6 @@ CREATE TABLE clients(
     city_id UUID REFERENCES cities(id) NOT NULL,
     active BOOLEAN DEFAULT TRUE,
     birthday DATE NOT NULL,
-    child_id UUID NOT NULL
+    child_id UUID REFERENCES children(id) NOT NULL
 );
-
--- table children
-CREATE TABLE children(
-    id UUID PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    birthday DATE,
-    client_id UUID REFERENCES clients(id)
-);
-
--- add fk child_id
-ALTER TABLE clients
-ADD CONSTRAINT fk_clients_children
-FOREIGN KEY (child_id) REFERENCES children(id);
 

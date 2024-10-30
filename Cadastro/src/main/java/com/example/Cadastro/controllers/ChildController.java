@@ -27,26 +27,22 @@ public class ChildController {
     @GetMapping(value = "/findbyid/{id}")
     public ResponseEntity<Optional<Child>> findById(@PathVariable UUID id){
         Optional<Child> childById = repository.findById(id);
-        if(childById.isPresent()) {
-            return new ResponseEntity<>(childById, HttpStatus.FOUND);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return childById.isPresent() ?
+                new ResponseEntity<>(childById, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "/findbyname/{name}")
     public ResponseEntity<Optional<Child>> findByName(@PathVariable String name){
         Optional<Child> childByName = repository.findByName(name);
-        if(childByName.isPresent()) {
-            return new ResponseEntity<>(childByName, HttpStatus.FOUND);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return childByName.isPresent() ?
+                new ResponseEntity<>(childByName, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
     public ResponseEntity<Child> postChild(@RequestBody Child child){
-        child.setId(UUID.randomUUID());
+
         Child newChild = repository.save(child);
         return new ResponseEntity<>(newChild, HttpStatus.CREATED);
     }
@@ -57,7 +53,6 @@ public class ChildController {
         if(childToUpdate.isPresent()){
             Child updateChild = childToUpdate.get();
 
-            updateChild.setName(child.getName());
             updateChild.setName(child.getName());
             updateChild.setBirthday(child.getBirthday());
 

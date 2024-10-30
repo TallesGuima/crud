@@ -26,27 +26,33 @@ public class StateController {
 
     @PostMapping
     public ResponseEntity<State> postState(@RequestBody State state){
-        state.setId(UUID.randomUUID());
+
         State newState = repository.save(state);
         return new ResponseEntity<>(newState, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/findbyid/{id}")
     public ResponseEntity<Optional<State>> findStateById(@PathVariable UUID id){
-        Optional<State> allStates = repository.findById(id);
-        return new ResponseEntity<>(allStates, HttpStatus.FOUND);
+        Optional<State> stateById = repository.findById(id);
+        return stateById.isPresent() ?
+                new ResponseEntity<>(stateById, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "/findbyname/{name}")
     public ResponseEntity<Optional<State>> findStateByName(@PathVariable String name){
-        Optional<State> allStates = repository.findByName(name);
-        return new ResponseEntity<>(allStates, HttpStatus.FOUND);
+        Optional<State> stateByName = repository.findByName(name);
+        return stateByName.isPresent() ?
+                new ResponseEntity<>(stateByName, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "/findbyuf/{abbreviation}")
     public ResponseEntity<Optional<State>> findStateByAbbreviaiton(@PathVariable String abbreviation){
-        Optional<State> states = repository.findByAbbreviation(abbreviation);
-        return new ResponseEntity<>(states, HttpStatus.FOUND);
+        Optional<State> statesByUf = repository.findByAbbreviation(abbreviation);
+        return statesByUf.isPresent() ?
+                new ResponseEntity<>(statesByUf, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping(value = "/{id}")

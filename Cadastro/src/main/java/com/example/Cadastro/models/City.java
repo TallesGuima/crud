@@ -2,6 +2,7 @@ package com.example.Cadastro.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
@@ -14,6 +15,11 @@ import java.util.UUID;
 @Table(name = "cities")
 public class City {
     @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
     private UUID id;
     @Column(nullable = false)
     private String name;

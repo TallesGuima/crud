@@ -26,29 +26,25 @@ public class ClientController {
 
     @PostMapping
     public ResponseEntity<Client> postClient(@RequestBody Client client){
-        client.setId(UUID.randomUUID());
+
         repository.save(client);
         return new ResponseEntity<>(client, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/findbyid/{id}")
     public ResponseEntity<Optional<Client>> findById(@PathVariable UUID id){
-        Optional<Client> client = repository.findById(id);
-        if(client.isPresent()){
-            return new ResponseEntity<>(client, HttpStatus.FOUND);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Optional<Client> clientById = repository.findById(id);
+        return clientById.isPresent() ?
+                new ResponseEntity<>(clientById, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "/findbyname/{name}")
     public ResponseEntity<Optional<Client>> findByName(@PathVariable String name){
-        Optional<Client> client = repository.findByName(name);
-        if(client.isPresent()){
-            return new ResponseEntity<>(client, HttpStatus.FOUND);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Optional<Client> clientByName = repository.findByName(name);
+        return clientByName.isPresent() ?
+                new ResponseEntity<>(clientByName, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping(value = "/{id}")
@@ -58,8 +54,11 @@ public class ClientController {
             Client updateClient = clientToUpdate.get();
 
             updateClient.setName(client.getName());
-            updateClient.setName(client.getName());
+            updateClient.setCity(client.getCity());
+            updateClient.setAddress(client.getAddress());
             updateClient.setBirthday(client.getBirthday());
+            updateClient.setActive(client.isActive());
+            updateClient.setChildren(client.getChildren());
 
 
             Client clientUpdated = repository.save(updateClient);
@@ -70,7 +69,7 @@ public class ClientController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Client> deleteChild(@PathVariable UUID id){
+    public ResponseEntity<Client> deleteClient(@PathVariable UUID id){
         if(repository.findById(id).isPresent()){
             repository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

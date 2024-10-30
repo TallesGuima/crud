@@ -27,18 +27,22 @@ public class CityController {
     @GetMapping(value = "/findbyid/{id}")
     public ResponseEntity<Optional<City>> findCityById(@PathVariable UUID id){
         Optional<City> cityById = repository.findById(id);
-        return new ResponseEntity<>(cityById, HttpStatus.FOUND);
+        return cityById.isPresent() ?
+                new ResponseEntity<>(cityById, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "/findbyname/{name}")
     public ResponseEntity<Optional<City>> findCityByName(@PathVariable String name){
         Optional<City> cityByName = repository.findByName(name);
-        return new ResponseEntity<>(cityByName, HttpStatus.FOUND);
+        return cityByName.isPresent() ?
+                new ResponseEntity<>(cityByName, HttpStatus.FOUND)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
     public ResponseEntity<City> postCity(@RequestBody City city){
-        city.setId(UUID.randomUUID());
+
         City newCity = repository.save(city);
         return new ResponseEntity<>(newCity, HttpStatus.CREATED);
     }
@@ -51,7 +55,6 @@ public class CityController {
 
             cityUpdate.setState(city.getState());
             cityUpdate.setName(city.getName());
-            cityUpdate.setState(city.getState());
 
             City cityUpdated = repository.save(cityUpdate);
             return new ResponseEntity<>(cityUpdated, HttpStatus.OK);
@@ -62,8 +65,7 @@ public class CityController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<City> deleteCity(@PathVariable UUID id){
-        Optional<City> cityToDelete = repository.findById(id);
-        if(cityToDelete.isPresent()){
+        if(repository.findById(id).isPresent()){
             repository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {

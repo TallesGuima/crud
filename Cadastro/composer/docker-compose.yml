@@ -5,9 +5,10 @@ services:
     image: postgres:14.13-alpine3.20
     restart: always
     shm_size: 128mb
-
+    
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
+      PGDATA: /var/lib/postgresql/data
     ports:
       - 5429:5432
