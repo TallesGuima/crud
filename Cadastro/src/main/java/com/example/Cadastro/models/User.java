@@ -30,4 +30,12 @@ public class User {
     private String password;
     @Column(nullable = false)
     private boolean active;
+
+
+    public User(String name, String login, String password, boolean active){
+        setName(name);
+        setLogin(login);
+        setPassword(password);
+        setActive(active);
+    }
 }
