@@ -40,11 +40,13 @@ public class UserController {
     }
 
     @GetMapping(value = "/findbyname/{name}")
-    public ResponseEntity<Optional<User>> getUserByName(@PathVariable String name) {
-        Optional<User> userByName = repository.findByName(name);
-        return userByName.isPresent() ?
-                new ResponseEntity<>(userByName, HttpStatus.FOUND)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<List<User>> getUserByName(@PathVariable String name) {
+        List<User> userByName = repository.findByName(name);
+
+        return userByName.isEmpty() ?
+            new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : new ResponseEntity<>(userByName, HttpStatus.FOUND);
+
     }
 
     @PutMapping(value = "/{id}")

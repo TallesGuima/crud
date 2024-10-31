@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,26 +28,29 @@ public class UserControllerTest {
     private UserRepository repository;
 
     User user;
-
+    User user1;
+    User user2;
     @BeforeEach
     public void setUp(){
-        user = new User("Talles", "talles@gmail.com", "123456", true);
+        user = new User("JohnDoe", "john@gmail.com", "123456", true);
+        user1 = new User("JaneDoe", "jane@gmail.com", "123456789", true);
+        user2 = new User("JaneDoe", "janedoe@gmail.com", "123", true);
     }
 
-    private void tests(Object userObject, User user){
+    private void tests(Object userObject, Object userObjectTest){
         assertNotNull(userObject);
-        assertEquals(user, userObject);
+        assertEquals(userObjectTest, userObject);
         verifyNoMoreInteractions(repository);
     }
 
-
     @Test
     public void testFindAllUsersReturnsExpectedList(){
-        when(repository.findAll()).thenReturn(Collections.singletonList(user));
+        List<User> users = List.of(user, user1, user2);
+        when(repository.findAll()).thenReturn(users);
         ResponseEntity<List<User>> usersTest = controller.getAllUsers();
 
         assertEquals(HttpStatus.OK, usersTest.getStatusCode());
-        tests(usersTest.getBody().get(0), user);
+        tests(users, usersTest.getBody());
         verify(repository).findAll();
     }
 
@@ -63,10 +65,18 @@ public class UserControllerTest {
 
     @Test
     public void testFindUsersByNameExpectedObjectName(){
-        when(repository.findByName(user.getName())).thenReturn(Optional.of(user));
-        Optional<User> userTest = controller.getUserByName(this.user.getName()).getBody();
+        List<User> users = List.of(user1, user2);
+        when(repository.findByName(user1.getName())).thenReturn(users);
+        List<User> userTestMultipleNameUsers = controller.getUserByName(user1.getName()).getBody();
 
-        tests(userTest.get(), user);
+        tests(users, userTestMultipleNameUsers);
+        verify(repository).findByName(this.user1.getName());
+
+
+        when(repository.findByName(user.getName())).thenReturn(List.of(user));
+        List<User> userTestUniqueNameUser = controller.getUserByName(this.user.getName()).getBody();
+
+        tests(this.user, userTestUniqueNameUser.get(0));
         verify(repository).findByName(this.user.getName());
     }
 
