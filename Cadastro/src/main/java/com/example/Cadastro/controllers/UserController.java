@@ -2,6 +2,7 @@ package com.example.Cadastro.controllers;
 
 import com.example.Cadastro.models.User;
 import com.example.Cadastro.repositories.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> postUser(@RequestBody User user){
+    public ResponseEntity<User> postUser(@Valid @RequestBody User user){
 
         User newUser = repository.save(user);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
