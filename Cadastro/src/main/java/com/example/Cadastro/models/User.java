@@ -24,7 +24,7 @@ public class User {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     @NotBlank(message = "Name given must not be empty or null")
-    @Size(max=100, message = "Name given must have 1-100 characters")
+    @Size(min = 1, max=255, message = "Name given must have 1-255 characters")
     @Column(nullable = false)
     private String name;
     @Email(message = "email invalid")
@@ -32,7 +32,7 @@ public class User {
     @NotBlank(message = "login given must not be empty or null")
     private String login;
     @NotBlank(message = "password given must not be empty or null")
-    @Size(min = 10, message = "password given must be more than 10")
+    @Size(min = 10, max = 255 , message = "password given must have 10-255 characters")
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)

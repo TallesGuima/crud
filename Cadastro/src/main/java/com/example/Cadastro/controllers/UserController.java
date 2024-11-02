@@ -2,6 +2,10 @@ package com.example.Cadastro.controllers;
 
 import com.example.Cadastro.models.User;
 import com.example.Cadastro.repositories.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +23,13 @@ public class UserController {
     @Autowired
     private UserRepository repository;
 
+
+    @Operation(description = "Busca todos os usuários")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Retorna todos os usuários"),
+        @ApiResponse(responseCode = "500", description = "Algo deu errado"),
+        @ApiResponse(responseCode = "400", description = "Sem corpo", content = @Content),
+    })
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> allUsers = repository.findAll();
@@ -26,12 +37,25 @@ public class UserController {
     }
 
     @PostMapping
+    @Operation(description = "Registra um usuário")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Dado(s) de usuário incorreto(s)"),
+        @ApiResponse(responseCode = "500", description = "Algo deu errado")
+    })
     public ResponseEntity<User> postUser(@Valid @RequestBody User user){
 
         User newUser = repository.save(user);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
+    @Operation(description = "Busca um usuário pelo id")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "302", description = "Usuário encontrado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado, id está errado"),
+        @ApiResponse(responseCode = "500", description = "Algo deu errado"),
+        @ApiResponse(responseCode = "400", description = "Sem corpo", content = @Content)
+    })
     @GetMapping(value = "/findbyid/{id}")
     public ResponseEntity<Optional<User>> getUserById(@PathVariable UUID id) {
         Optional<User> userById = repository.findById(id);
@@ -40,6 +64,13 @@ public class UserController {
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @Operation(description = "Busca vários usuários pelo nome")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "302", description = "Usuários encontrados"),
+        @ApiResponse(responseCode = "404", description = "Usuários não foram encontrados, nome está errado"),
+        @ApiResponse(responseCode = "500", description = "Algo deu errado"),
+        @ApiResponse(responseCode = "400", description = "Sem corpo", content = @Content)
+    })
     @GetMapping(value = "/findbyname/{name}")
     public ResponseEntity<List<User>> getUserByName(@PathVariable String name) {
         List<User> userByName = repository.findByName(name);
@@ -50,8 +81,15 @@ public class UserController {
 
     }
 
+    @Operation(description = "Faz o update de um usuário encontrado pelo id")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuário modificado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Usuários não foram encontrados, verifique o id"),
+        @ApiResponse(responseCode = "400", description = "Dado(s) de usuário incorreto(s)"),
+        @ApiResponse(responseCode = "500", description = "Algo deu errado")
+    })
     @PutMapping(value = "/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody User user) {
         Optional<User> userToUpdate = repository.findById(id);
         if(userToUpdate.isPresent()){
             User userUpdate = userToUpdate.get();
@@ -69,6 +107,13 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @Operation(description = "Deleta um usuário pelo id")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Usuário não encontrado, verifique o id"),
+        @ApiResponse(responseCode = "500", description = "Algo deu errado"),
+        @ApiResponse(responseCode = "400", description = "Sem corpo", content = @Content)
+    })
     public ResponseEntity deleteUser(@PathVariable UUID id){
         if(repository.findById(id).isPresent()){
             repository.deleteById(id);
