@@ -2,6 +2,7 @@ package com.example.Cadastro.controllers;
 
 import com.example.Cadastro.models.User;
 import com.example.Cadastro.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
+
 @ExtendWith(MockitoExtension.class)
+@Transactional
+@ActiveProfiles(value = "test")
 public class UserControllerTest {
 
     @InjectMocks
@@ -26,6 +31,7 @@ public class UserControllerTest {
 
     @Mock
     private UserRepository repository;
+
 
     User user;
     User user1;
@@ -79,5 +85,4 @@ public class UserControllerTest {
         tests(this.user, userTestUniqueNameUser.get(0));
         verify(repository).findByName(this.user.getName());
     }
-
 }
