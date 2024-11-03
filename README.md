@@ -173,3 +173,7 @@ Para acessar os Endpoints de usuário, use a url ```localhost:8090/cadastro/user
 ```
 
 Para mais detalhes, ao ativar a aplicação, entre na url: ```http://localhost:8090/cadastro/swagger-ui/index.html``` 
+
+**Licença:**
+
+Este projeto está licenciado sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
