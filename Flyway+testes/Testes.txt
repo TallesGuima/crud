@@ -1,0 +1,5 @@
+Testes unitários
+	Testes unitários são scripts que testam métodos/partes de um código em específico sem a interferencia do sistema em um todo, então ele é isolado da aplicação em si. O objetivo dele é verificar que cada parte do código está funcionando de 	forma correta.
+	Quando um projeto vai ficando maior, a complexidade vai aumentando e é ai que os testes unitários brilham, ele evita o downgrade de versão desnecessária, quando se programa em um projeto grande, fica custoso saber quais métodos funcionam e quais precisam de uma atualização/modificação para gerar o resultado esperado, com os testes unitários isso se torna simples pois, é possível saber exatamente qual parte do código está gerando o erro e até já saber o porque desse erro evitando assim, o downgrade de versão desnecessário e sabendo onde está o erro do código naturalmente a qualidade do mesmo aumenta. 
+	
+Testes de integração - Entendi os testes unitários mas, não os de integração
