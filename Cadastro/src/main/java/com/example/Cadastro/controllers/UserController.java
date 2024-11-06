@@ -1,7 +1,9 @@
 package com.example.Cadastro.controllers;
 
+import com.example.Cadastro.dtos.UserDTO;
 import com.example.Cadastro.models.User;
 import com.example.Cadastro.repositories.UserRepository;
+import com.example.Cadastro.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,12 +15,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserRepository repository;
@@ -31,9 +35,9 @@ public class UserController {
         @ApiResponse(responseCode = "400", description = "Sem corpo", content = @Content),
     })
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> allUsers = repository.findAll();
-        return new ResponseEntity<>(allUsers, HttpStatus.OK);
+    public ResponseEntity<List<User>> findAllUsers() {
+        System.out.println(userService.getAllUser().get(0));
+        return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
     }
 
     @PostMapping
@@ -43,10 +47,8 @@ public class UserController {
         @ApiResponse(responseCode = "400", description = "Dado(s) de usuário incorreto(s)"),
         @ApiResponse(responseCode = "500", description = "Algo deu errado")
     })
-    public ResponseEntity<User> postUser(@Valid @RequestBody User user){
-
-        User newUser = repository.save(user);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    public ResponseEntity<User> postUser(@Valid @RequestBody UserDTO userDTO){
+        return new ResponseEntity<>(userService.postUser(userDTO), HttpStatus.CREATED);
     }
 
     @Operation(description = "Busca um usuário pelo id")
@@ -57,11 +59,13 @@ public class UserController {
         @ApiResponse(responseCode = "400", description = "Sem corpo", content = @Content)
     })
     @GetMapping(value = "/findbyid/{id}")
-    public ResponseEntity<Optional<User>> getUserById(@PathVariable UUID id) {
-        Optional<User> userById = repository.findById(id);
-        return userById.isPresent() ?
-                new ResponseEntity<>(userById, HttpStatus.FOUND)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<User> findUserById(@PathVariable UUID id) {
+        User user = userService.getUserById(id);
+        if(user.getId() == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(user, HttpStatus.FOUND);
+        }
     }
 
     @Operation(description = "Busca vários usuários pelo nome")
@@ -72,13 +76,13 @@ public class UserController {
         @ApiResponse(responseCode = "400", description = "Sem corpo", content = @Content)
     })
     @GetMapping(value = "/findbyname/{name}")
-    public ResponseEntity<List<User>> getUserByName(@PathVariable String name) {
-        List<User> userByName = repository.findByName(name);
-
-        return userByName.isEmpty() ?
-            new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                : new ResponseEntity<>(userByName, HttpStatus.FOUND);
-
+    public ResponseEntity<List<User>> findUserByName(@PathVariable String name) {
+        List<User> users = userService.getUserByName(name);
+        if(users.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(users, HttpStatus.FOUND);
+        }
     }
 
     @Operation(description = "Faz o update de um usuário encontrado pelo id")
@@ -89,20 +93,12 @@ public class UserController {
         @ApiResponse(responseCode = "500", description = "Algo deu errado")
     })
     @PutMapping(value = "/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody User user) {
-        Optional<User> userToUpdate = repository.findById(id);
-        if(userToUpdate.isPresent()){
-            User userUpdate = userToUpdate.get();
-
-            userUpdate.setName(user.getName());
-            userUpdate.setLogin(user.getLogin());
-            userUpdate.setPassword(user.getPassword());
-            userUpdate.setActive(user.isActive());
-
-            User userUpdated = repository.save(userUpdate);
-            return new ResponseEntity<>(userUpdated, HttpStatus.OK);
+    public ResponseEntity<User> updateUser(@PathVariable UUID id, @Valid @RequestBody UserDTO userDTO) {
+        User user = userService.putUser(id, userDTO);
+        if(user == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         }
     }
 
@@ -115,12 +111,7 @@ public class UserController {
         @ApiResponse(responseCode = "400", description = "Sem corpo", content = @Content)
     })
     public ResponseEntity deleteUser(@PathVariable UUID id){
-        if(repository.findById(id).isPresent()){
-            repository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(userService.deleteUser(id));
     }
 
 

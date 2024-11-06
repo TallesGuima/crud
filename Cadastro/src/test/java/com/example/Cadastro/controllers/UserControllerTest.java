@@ -53,7 +53,7 @@ public class UserControllerTest {
     public void testFindAllUsersReturnsExpectedList(){
         List<User> users = List.of(user, user1, user2);
         when(repository.findAll()).thenReturn(users);
-        ResponseEntity<List<User>> usersTest = controller.getAllUsers();
+        ResponseEntity<List<User>> usersTest = controller.findAllUsers();
 
         assertEquals(HttpStatus.OK, usersTest.getStatusCode());
         tests(users, usersTest.getBody());

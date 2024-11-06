@@ -9,6 +9,6 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
-      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: cefet
     ports:
       - 5429:5432
